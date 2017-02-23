@@ -38,7 +38,8 @@
 * PROGRAM HISTORY:
 *  DATE MODIFIED  USERID      COMMENT
 *  -------------  ----------  ----------------------------------------------
-*  ddmmyyyy      <<userid>>  <<DOCUMENT CHANGE HERE>>
+*  23Feb2017      alea        Code "if index(upcase(FORMAT), '') then" replaced by
+*                             "if index(upcase(FORMAT), '') gt 0 then" in db01_DDT_DATE;
 ****************************************************************************/
 
 ********** SAS Options (see also at end of program: options nobomfile);
@@ -356,19 +357,19 @@ data db01_DDT_DATE;
     ********** Identify Dates (extend code, if neccessary);
     if index(upcase(FORMAT), 'DATE') gt 0 then TYP="date";
     if index(upcase(FORMAT), 'DDMMYY') gt 0 then TYP="date";
-    if index(upcase(FORMAT), 'MMDDYY') then TYP="date";
-    if index(upcase(FORMAT), 'YYMMDD') then TYP="date";
-    if index(upcase(FORMAT), 'E8601DT') then TYP="date";
-    if index(upcase(FORMAT), 'EURDFD') then TYP="date"; * can be overwritten with EURDFDT (dtim);
+    if index(upcase(FORMAT), 'MMDDYY') gt 0 then TYP="date";
+    if index(upcase(FORMAT), 'YYMMDD') gt 0 then TYP="date";
+    if index(upcase(FORMAT), 'E8601DT') gt 0 then TYP="date";
+    if index(upcase(FORMAT), 'EURDFD') gt 0 then TYP="date"; * can be overwritten with EURDFDT (dtim);
 
     ********** Identify Time Formats;
-    if index(upcase(FORMAT), 'TIME') then TYP="time";
-    if index(upcase(FORMAT), 'HHMM') then TYP="time";
+    if index(upcase(FORMAT), 'TIME') gt 0 then TYP="time";
+    if index(upcase(FORMAT), 'HHMM') gt 0 then TYP="time";
 
     ********** Identify DateTime Formats;
-    if index(upcase(FORMAT), 'DATETIME') then TYP="dtim";
-    if index(upcase(FORMAT), 'DATEAMPM') then TYP="dtim";
-    if index(upcase(FORMAT), 'EURDFDT') then TYP="dtim";
+    if index(upcase(FORMAT), 'DATETIME') gt 0 then TYP="dtim";
+    if index(upcase(FORMAT), 'DATEAMPM') gt 0 then TYP="dtim";
+    if index(upcase(FORMAT), 'EURDFDT') gt 0 then TYP="dtim";
 
     label TYP="Type";
 run;
