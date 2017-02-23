@@ -22,7 +22,8 @@
 * PROGRAM HISTORY:
 *  DATE MODIFIED  USERID      COMMENT
 *  -------------  ----------  ----------------------------------------------
-*  ddmmyyyy      <<userid>>  <<DOCUMENT CHANGE HERE>>
+*  23Feb2017      alea        Initialization of db03_formats_files modified to avoid errors 
+*                             when there are no user-defined formats in the database;
 ******************************************************************************/;
 
 ;/******************************************************************;
@@ -57,8 +58,15 @@ data db03_User_Defs;
 run;
 proc sort data=db03_User_Defs; by FORMAT; run;
 
-********** Delete File (initialize) - Database with 'distinct' formats/labels;
-proc datasets lib=work nodetails nolist; delete db03_formats_files; run;
+********** Initialize File - Database with 'distinct' formats/labels;
+data db03_formats_files;
+    format LABEL $200. MEMNAME $32. NAME $32. INDATAFRAME $1.;
+    LABEL="";
+    NAME="";
+    MEMNAME="";
+    INDATAFRAME="";
+    delete;
+run;
 
 ********** Macro for counting distinct formats/labels in SAS database;
 ********** Similar to 'proc freq data=&INDB, table FORMVAR;
