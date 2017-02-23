@@ -193,7 +193,7 @@ quit;
 
 Note that the **notsorted** option is very useful if the rank order should be maintained (instead of an alphabetic order), here *No, Yes, Unknown*
 
-Formats like e.g. 30 - 50 = 'Between 30 and 50', or *picture* formtas cannot be used.
+Formats like e.g. 30 - 50 = 'Between 30 and 50', or *picture* formats cannot be used.
 
 ### SAS xport Files
 
@@ -270,19 +270,19 @@ When you use date or datetime formats other than 'DATE', 'DDMMYY', 'MMDDYY', 'YY
     ********** Identify Dates (extend code, if neccessary);
     if index(upcase(FORMAT), 'DATE') gt 0 then TYP="date";
     if index(upcase(FORMAT), 'DDMMYY') gt 0 then TYP="date";
-    if index(upcase(FORMAT), 'MMDDYY') then TYP="date";
-    if index(upcase(FORMAT), 'YYMMDD') then TYP="date";
-    if index(upcase(FORMAT), 'E8601DT') then TYP="date";
-    if index(upcase(FORMAT), 'EURDFD') then TYP="date"; * can be overwritten with EURDFDT (dtim);
+    if index(upcase(FORMAT), 'MMDDYY') gt 0 then TYP="date";
+    if index(upcase(FORMAT), 'YYMMDD') gt 0 then TYP="date";
+    if index(upcase(FORMAT), 'E8601DT') gt 0 then TYP="date";
+    if index(upcase(FORMAT), 'EURDFD') gt 0 then TYP="date"; * can be overwritten with EURDFDT (dtim);
 
     ********** Identify Time Formats;
-    if index(upcase(FORMAT), 'TIME') then TYP="time";
-    if index(upcase(FORMAT), 'HHMM') then TYP="time";
+    if index(upcase(FORMAT), 'TIME') gt 0 then TYP="time";
+    if index(upcase(FORMAT), 'HHMM') gt 0 then TYP="time";
 
     ********** Identify DateTime Formats;
-    if index(upcase(FORMAT), 'DATETIME') then TYP="dtim";
-    if index(upcase(FORMAT), 'DATEAMPM') then TYP="dtim";
-    if index(upcase(FORMAT), 'EURDFDT') then TYP="dtim";
+    if index(upcase(FORMAT), 'DATETIME') gt 0 then TYP="dtim";
+    if index(upcase(FORMAT), 'DATEAMPM') gt 0 then TYP="dtim";
+    if index(upcase(FORMAT), 'EURDFDT') gt 0 then TYP="dtim";
 ```
 
 ### R Times without Date Part
@@ -314,13 +314,13 @@ Consider also to assign 'formats' to *all* variables, e.g. $20., BEST12., 8., da
 
 #### Critical Errors
 
-There may be some values in the SAS database - where a user-defined format is assigned - but with **no** corresponding format definition/value label, e.g. when SEX in 'proc format' is defined as "F", "M" but in the database also "U" (for *Unknown*) is present. In this case the value "U" will be set to 'NA' in R, w/o any warning.
+There may be some values in the SAS database - where a user-defined format is assigned - but with **no** corresponding format definition/value label, e.g. when $SEX in 'proc format' is defined as "F", "M" but in the database also "U" (for *Unknown*) is present. In this case the value "U" will be set to 'NA' in R, w/o any warning.
 
 Consider extension of definitions in SAS *proc format* (highly recommended!).
 
 #### Non-Critical Discrepancies
 
-On the other hand, there may be SAS formats/value labels defined, but the value in the database is missing, e.g. SEX is defined as "F", "M" and "U", but the value "U" (for *Unknown*) is missing in the database.
+On the other hand, there may be SAS formats/value labels defined, but the value in the database is missing, e.g. $SEX is defined as "F", "M" and "U", but the value "U" (for *Unknown*) is missing in the database.
 
 Check, if changes are necessary. Such categorization can be intended e.g. for tabulation of categories with missing values, here category *Unknown* with N=0.
 
@@ -331,6 +331,6 @@ Check, if changes are necessary. Such categorization can be intended e.g. for ta
 Conclusion
 ----------
 
-This SAS program allows a quick transformation of many *SAS .xpt files* to *R data frames*. To implement the program only a few parameters - namely the library where the xpt files are stored and the location of the user-defined SAS formats - have to be entered and in two steps *R data frames* were generated automatically with variable *factors*, *levels*, *labels* and *R date/times*. The program provides also a *Data Definition Table* to see the variable properties and the decodes of the formats. Finally, a 2nd SAS program can be run to check if there are values in the database w/o corresponding value labels/format definitions (and vice versa).
+This SAS program allows a quick transformation of many *SAS .xpt files* to *R data frames*. To implement the program only a few parameters - namely the directory where the xpt files are stored and the location of the user-defined SAS formats - have to be entered and in two steps *R data frames* were generated automatically with variable *factors*, *levels*, *labels* and *R date/times*. The program provides also a *Data Definition Table* to see the variable properties and the decodes of the formats. Finally, a 2nd SAS program can be run to check if there are values in the database w/o corresponding value labels/format definitions (and vice versa).
 
 Beside the **R base** functions only the functions **foreign::read.xport**, **Hmisc::label** and **chron::times** will be used for generating *R data frames*.
