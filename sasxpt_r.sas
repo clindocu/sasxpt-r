@@ -1,6 +1,6 @@
 ;/******************************************************************;
 *      PROGRAM: sasxpt_r.sas
-*      VERSION: 0.1.0
+*      VERSION: 0.1.1
 *       AUTHOR: @aleaiacta
 ********************************************************************;
 *  DESCRIPTION: This program first imports SAS xpt files and generates 
@@ -40,6 +40,10 @@
 *  -------------  ----------  ----------------------------------------------
 *  23Feb2017      alea        Code "if index(upcase(FORMAT), '') then" replaced by
 *                             "if index(upcase(FORMAT), '') gt 0 then" in db01_DDT_DATE;
+*  24Feb2017      alea        Code modified in db01_DDT_DATE (if DECODE ne "" added) - to include
+*                             non user-defined formats only for identification of date, time, dtim;
+*                             Code where=(START ne END or START="**OTHER**") modified - additional;
+*                             data check;
 ****************************************************************************/
 
 ********** SAS Options (see also at end of program: options nobomfile);
@@ -223,12 +227,12 @@ proc report data=db00_formats1b nowd ls=160 headskip headline missing;
     define LABEL / width=40 flow;
 
     break after FULL_FNAME / skip;
-    where START ne END;
+    where (START ne END or START="**OTHER**");
 run;
 
 ********** Print Error to log:;
 data _NULL_;
-    set db00_formats1b (where=(START ne END));
+    set db00_formats1b (where=(START ne END or START="**OTHER**"));
     put "ERROR: Only 'simple' formats can be used. Change format definitions in 'proc format' for: " FULL_FNAME "Start = " START "End = " END;
 run;
 
@@ -352,25 +356,27 @@ proc sort data=db01_DDT; by LIBNAME MEMNAME VARNUM; run;
 ********** NOTE: Extend code here, when you use other date/time formats;
 data db01_DDT_DATE;
     format VARNUM MEMNAME NAME LABEL TYP FORMAT DECODE;
-    set db01_DDT (keep=MEMNAME VARNUM NAME LABEL TYPE LENGTH FORMAT DECODE  FORMCD LEVELCD);
+    set db01_DDT (keep=MEMNAME VARNUM NAME LABEL TYPE LENGTH FORMAT DECODE FORMCD LEVELCD);
     TYP=TYPE;
-    ********** Identify Dates (extend code, if neccessary);
-    if index(upcase(FORMAT), 'DATE') gt 0 then TYP="date";
-    if index(upcase(FORMAT), 'DDMMYY') gt 0 then TYP="date";
-    if index(upcase(FORMAT), 'MMDDYY') gt 0 then TYP="date";
-    if index(upcase(FORMAT), 'YYMMDD') gt 0 then TYP="date";
-    if index(upcase(FORMAT), 'E8601DT') gt 0 then TYP="date";
-    if index(upcase(FORMAT), 'EURDFD') gt 0 then TYP="date"; * can be overwritten with EURDFDT (dtim);
+    ********** In case of non user-defined formats;
+    if DECODE eq "" then do;
+       ********** Identify Dates (extend code, if neccessary);
+       if index(upcase(FORMAT), 'DATE') gt 0 then TYP="date";
+       if index(upcase(FORMAT), 'DDMMYY') gt 0 then TYP="date";
+       if index(upcase(FORMAT), 'MMDDYY') gt 0 then TYP="date";
+       if index(upcase(FORMAT), 'YYMMDD') gt 0 then TYP="date";
+       if index(upcase(FORMAT), 'E8601DT') gt 0 then TYP="date";
+       if index(upcase(FORMAT), 'EURDFD') gt 0 then TYP="date"; * can be overwritten with EURDFDT (dtim);
 
-    ********** Identify Time Formats;
-    if index(upcase(FORMAT), 'TIME') gt 0 then TYP="time";
-    if index(upcase(FORMAT), 'HHMM') gt 0 then TYP="time";
+       ********** Identify Time Formats;
+       if index(upcase(FORMAT), 'TIME') gt 0 then TYP="time";
+       if index(upcase(FORMAT), 'HHMM') gt 0 then TYP="time";
 
-    ********** Identify DateTime Formats;
-    if index(upcase(FORMAT), 'DATETIME') gt 0 then TYP="dtim";
-    if index(upcase(FORMAT), 'DATEAMPM') gt 0 then TYP="dtim";
-    if index(upcase(FORMAT), 'EURDFDT') gt 0 then TYP="dtim";
-
+       ********** Identify DateTime Formats;
+       if index(upcase(FORMAT), 'DATETIME') gt 0 then TYP="dtim";
+       if index(upcase(FORMAT), 'DATEAMPM') gt 0 then TYP="dtim";
+       if index(upcase(FORMAT), 'EURDFDT') gt 0 then TYP="dtim";
+       end;
     label TYP="Type";
 run;
 
