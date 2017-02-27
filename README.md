@@ -4,10 +4,12 @@ sasxpt-r
 
 Import of SAS .xpt files into R. Generation of a Data Definition Table (DDT) in SAS.
 
+Data checks regarding values in data base vs. format definitions/value labels.
+
 Overview
 --------
 
-The goal of this SAS program is to import **SAS .xpt files** by generating automatically an executable *.R script file* that generates R data frames with variable *factors*, *levels*, *labels* and *R date/times*.
+The goal of this SAS program is to import **SAS .xpt files** by generating automatically an executable *.R script file* that generates R data frames - step by step - with variable *factors*, *levels*, *labels* and *R date/times*.
 
 For importing of .xpt files **two steps** must be followed:
 
@@ -155,6 +157,20 @@ label(DM$TESTTM) <- "Time of (Test)"
 After running this *.R script file* in R or RStudio -&gt; look for warnings (there should not be any) -&gt; finished
 
 **Note:** Beside the **R base** functions (**as.POSIXct**, **as.Date**, **factor**, **levels** and **format**) only the functions **foreign::read.xport**, **Hmisc::label** and **chron::times** will be used for generating *R data frames*.
+
+#### Alternative method
+
+**Note**: There is an alternative - very much shorter - method to import SAS .xpt files into R, e.g. using the function **Hmisc::sasxport.get**:
+
+``` r
+library(foreign)
+# Formats exported in SAS with 'proc format cntlout=format; run; quit;'
+form <- read.xport("format.xpt")
+
+library(Hmisc)
+# Convert .xpt files to R data frames with formats, levels, labels and R date/times;
+DM <- sasxport.get("DM.xpt", formats = form, lowernames = FALSE, allow = "_")
+```
 
 Tests
 -----
@@ -331,6 +347,6 @@ Check, if changes are necessary. Such categorization can be intended e.g. for ta
 Conclusion
 ----------
 
-This SAS program allows a quick transformation of many *SAS .xpt files* to *R data frames*. To implement the program only a few parameters - namely the directory where the xpt files are stored and the location of the user-defined SAS formats - have to be entered and in two steps *R data frames* were generated automatically with variable *factors*, *levels*, *labels* and *R date/times*. The program provides also a *Data Definition Table* to see the variable properties and the decodes of the formats. Finally, a 2nd SAS program can be run to check if there are values in the database w/o corresponding value labels/format definitions (and vice versa).
+This SAS program allows a quick transformation of many *SAS .xpt files* to *R data frames*. To implement the program only a few parameters - namely the directory where the xpt files are stored and the location of the user-defined SAS formats - have to be entered and in two steps *R data frames* were generated automatically - step by step - with variable *factors*, *levels*, *labels* and *R date/times*. The program provides also a *Data Definition Table* to see the variable properties and the decodes of the formats. Finally, a 2nd SAS program can be run to check if there are values in the database w/o corresponding value labels/format definitions (and vice versa).
 
 Beside the **R base** functions only the functions **foreign::read.xport**, **Hmisc::label** and **chron::times** will be used for generating *R data frames*.
