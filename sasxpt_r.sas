@@ -1,6 +1,6 @@
 ;/******************************************************************;
 *      PROGRAM: sasxpt_r.sas
-*      VERSION: 0.1.1
+*      VERSION: 0.1.2
 *       AUTHOR: @aleaiacta
 ********************************************************************;
 *  DESCRIPTION: This program first imports SAS xpt files and generates 
@@ -44,6 +44,7 @@
 *                             non user-defined formats only for identification of date, time, dtim;
 *                             Code where=(START ne END or START="**OTHER**") modified - additional;
 *                             data check;
+*  03Mar2017      alea        split="~~" in proc report added for better readability (no line break with /);
 ****************************************************************************/
 
 ********** SAS Options (see also at end of program: options nobomfile);
@@ -219,7 +220,7 @@ run;
 
 title1 "sasxpt_r.sas ERROR: Listing of non-simple Formats ";
 footnote1 "NOTE: Only 'simple' formats (e.g. 'Data-value-1' = 'Label 1') can be used. Change format definitions in proc format!";
-proc report data=db00_formats1b nowd ls=160 headskip headline missing;
+proc report data=db00_formats1b nowd split="~~" ls=160 headskip headline missing;
     column FULL_FNAME START END LABEL;
     define FULL_FNAME / width=32 flow order;
     define START / width=30 flow;
@@ -396,7 +397,7 @@ run;
  
 title1 'sasxpt_r.sas Data Definition Table';
 footnote1 "RECOMMENDATION: All variables should have variable 'labels' and 'formats'";
-proc report data=db01_DDT_FINAL nowd ls=160 headskip headline missing;
+proc report data=db01_DDT_FINAL nowd split="~~" ls=160 headskip headline missing;
     column MEMNAME NAME LABEL TYP FORMAT DECODE;
     define MEMNAME / width=10 flow order;
     define NAME / width=10;
