@@ -1,6 +1,6 @@
 ;/******************************************************************;
 *      PROGRAM: sasxpt_r.sas
-*      VERSION: 0.1.0
+*      VERSION: 0.1.1
 *       AUTHOR: @aleaiacta
 ********************************************************************;
 *  DESCRIPTION: This program performs data checks regarding values that 
@@ -24,6 +24,7 @@
 *  -------------  ----------  ----------------------------------------------
 *  23Feb2017      alea        Initialization of db03_formats_files modified to avoid errors 
 *                             when there are no user-defined formats in the database;
+*  03Mar2017      alea        split="~~" in proc report added for better readability (no line break with /);
 ******************************************************************************/;
 
 ;/******************************************************************;
@@ -162,7 +163,7 @@ title1 "sasformat_chk.sas Errors and Warnings regarding Values in Database and d
 footnote1 "NOTE: In case of 'ERROR!!!!' (critical) the value will be assigned to 'NA' in R (w/o warnings)";
 footnote2 "Extend SAS Format Definitions (highly recommended!)";
 footnote3 "NOTE: In case of 'Warning' review Format Definitions (changes not necessary)";
-proc report data=db04_Final_Errors nowd ls=160 headskip headline missing;
+proc report data=db04_Final_Errors nowd split="~~" ls=160 headskip headline missing;
     column MEMNAME NAME FORMAT LABEL INFORMDEF INDATAFRAME ERRMSG ERRMSG2;
     define MEMNAME / width=10 flow order;
     define NAME / width=10 order;
