@@ -76,7 +76,7 @@ run;
 data db03_Temp;
     format LABEL $200.;
     set &INDB;
-    LABEL=strip(vvalue(&FORMVAR));
+    LABEL=vvalue(&FORMVAR);
     ;/********** Exclude missings values */ 
     if not missing(&FORMVAR);
 run;
@@ -87,7 +87,7 @@ create table db03_chk1 as
               "&INDB" format=$32. length=32 as MEMNAME, 
               "&FORMVAR" format=$32. length=32 as NAME,
               "Y" as INDATAFRAME
-       from db03_Temp
+       from db03_Temp;
 run;
 quit;
 ;/********** Append with previously generated dataset (if available) */ 
